@@ -1,0 +1,619 @@
+/* ============================================================================
+   DARK PSYCHEDELIC PERSONAL LANDING PAGE
+   ============================================================================ */
+
+/* ============================================================================
+   CUSTOM PROPERTIES (DESIGN TOKENS)
+   ============================================================================ */
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #0d0b1a;
+  --text-primary: #e0e0e8;
+  --text-muted: #8888a0;
+  --accent-cyan: #00f0ff;
+  --accent-magenta: #ff00aa;
+  --accent-violet: #8b5cf6;
+  --accent-green: #39ff14;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Exo 2', sans-serif;
+}
+
+/* ============================================================================
+   RESET & BASE STYLES
+   ============================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent-magenta);
+  color: var(--bg-primary);
+}
+
+/* ============================================================================
+   CANVAS & NOISE OVERLAY
+   ============================================================================ */
+
+#hero-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  background-repeat: repeat;
+}
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+
+.hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px var(--accent-cyan), 0 0 40px var(--accent-cyan), 0 0 80px var(--accent-violet);
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+  margin-bottom: 1rem;
+}
+
+@keyframes glow-pulse {
+  from {
+    text-shadow: 0 0 10px var(--accent-cyan), 0 0 40px var(--accent-cyan), 0 0 80px var(--accent-violet);
+  }
+  to {
+    text-shadow: 0 0 15px var(--accent-magenta), 0 0 50px var(--accent-magenta), 0 0 100px var(--accent-cyan);
+  }
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--text-muted);
+  margin-top: 1rem;
+  font-weight: 300;
+  max-width: 600px;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ============================================================================
+   SCROLL CHEVRON
+   ============================================================================ */
+
+.scroll-chevron {
+  position: absolute;
+  bottom: 2rem;
+  color: var(--text-muted);
+  animation: bounce 2s ease-in-out infinite;
+  text-decoration: none;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.scroll-chevron:hover {
+  color: var(--accent-cyan);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* ============================================================================
+   SECTIONS
+   ============================================================================ */
+
+.section {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+
+.section p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+/* ============================================================================
+   TEXT EFFECTS
+   ============================================================================ */
+
+.cyan-glow {
+  text-shadow: 0 0 10px var(--accent-cyan), 0 0 30px var(--accent-cyan);
+}
+
+.magenta-glow {
+  text-shadow: 0 0 10px var(--accent-magenta), 0 0 30px var(--accent-magenta);
+}
+
+.gradient-glow {
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet), var(--accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px var(--accent-violet));
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border: 1.5px solid;
+  border-radius: 50px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: transparent;
+}
+
+.btn-cyan {
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+}
+
+.btn-cyan:hover {
+  background: var(--accent-cyan);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px var(--accent-cyan);
+  transform: translateY(-2px);
+}
+
+.btn-magenta {
+  color: var(--accent-magenta);
+  border-color: var(--accent-magenta);
+}
+
+.btn-magenta:hover {
+  background: var(--accent-magenta);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px var(--accent-magenta);
+  transform: translateY(-2px);
+}
+
+.btn-violet {
+  color: var(--accent-violet);
+  border-color: var(--accent-violet);
+}
+
+.btn-violet:hover {
+  background: var(--accent-violet);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px var(--accent-violet);
+  transform: translateY(-2px);
+}
+
+/* ============================================================================
+   SOCIAL LINKS
+   ============================================================================ */
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-muted);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.social-link svg {
+  fill: currentColor;
+  width: 24px;
+  height: 24px;
+}
+
+/* ============================================================================
+   MUSIC LINKS
+   ============================================================================ */
+
+.music-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.music-links .social-link:hover {
+  color: var(--accent-magenta);
+  border-color: var(--accent-magenta);
+  box-shadow: 0 0 15px rgba(255, 0, 170, 0.3);
+}
+
+/* ============================================================================
+   GRAVISYNTH SVG DIAGRAM
+   ============================================================================ */
+
+.gs-diagram {
+  margin: 2rem 0;
+  max-width: 100%;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+}
+
+.gs-node {
+  animation: gs-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes gs-glow {
+  0% {
+    stroke: var(--accent-cyan);
+    filter: drop-shadow(0 0 3px var(--accent-cyan));
+  }
+  50% {
+    stroke: var(--accent-violet);
+    filter: drop-shadow(0 0 3px var(--accent-violet));
+  }
+  100% {
+    stroke: var(--accent-magenta);
+    filter: drop-shadow(0 0 3px var(--accent-magenta));
+  }
+}
+
+.gs-connection {
+  opacity: 0.6;
+  stroke: var(--accent-violet);
+  stroke-dasharray: 4 3;
+}
+
+.gs-pulse {
+  opacity: 0.8;
+}
+
+/* ============================================================================
+   MUSICIAN SECTION
+   ============================================================================ */
+
+.musician-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid var(--accent-magenta);
+  box-shadow: 0 0 30px rgba(255, 0, 170, 0.3);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.musician-info {
+  flex: 1;
+}
+
+.spotify-container {
+  margin: 2rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 352px;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(136, 136, 160, 0.1);
+}
+
+.spotify-container iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
+/* ============================================================================
+   SECTION BACKGROUNDS (Gradient Transitions)
+   ============================================================================ */
+
+.engineer-section {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 240, 255, 0.05) 0%,
+    transparent 70%
+  );
+}
+
+.gravisynth-section {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(139, 92, 246, 0.05) 0%,
+    transparent 70%
+  );
+}
+
+.musician-section {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 0, 170, 0.05) 0%,
+    transparent 70%
+  );
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid rgba(136, 136, 160, 0.1);
+}
+
+.footer .social-links {
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.copyright {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 300;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - TABLET & UP (768px+)
+   ============================================================================ */
+
+@media (min-width: 768px) {
+  .musician-header {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .musician-info {
+    flex: 1;
+  }
+
+  .section {
+    padding: 8rem 2rem;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - LARGE SCREENS (1440px+)
+   ============================================================================ */
+
+@media (min-width: 1440px) {
+  .section {
+    max-width: 960px;
+  }
+
+  .hero-name {
+    font-size: 6rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY - REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  #hero-canvas {
+    display: none;
+  }
+
+  .hero-name {
+    animation: none;
+  }
+
+  .gs-node {
+    animation: none;
+  }
+
+  .scroll-chevron {
+    animation: none;
+  }
+
+  .section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================================
+   UTILITY & MISCELLANEOUS
+   ============================================================================ */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a {
+  transition: all 0.3s ease;
+}
+
+/* Code/Pre styling if needed */
+code {
+  background: var(--bg-secondary);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--accent-green);
+}
+
+pre {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-left: 3px solid var(--accent-cyan);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+/* Scrollbar styling (Webkit browsers) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-cyan);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-magenta);
+}
+
+/* ============================================================================
+   END OF CSS
+   ============================================================================ */
