@@ -230,11 +230,6 @@
           engineerImg.classList.add('active');
         }
       });
-      btn.addEventListener('mouseleave', function() {
-        heroProfile.className = 'hero-profile';
-        musicianImg.classList.remove('active');
-        engineerImg.classList.add('active');
-      });
     });
   }
 
