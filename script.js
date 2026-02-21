@@ -12,6 +12,19 @@
       let particles = [];
 
       const colors = ['#00f0ff', '#ff00aa', '#8b5cf6', '#39ff14'];
+      var mouse = { x: -1000, y: -1000 };
+      var attractRadius = 180;
+      var attractStrength = 0.08;
+      var trailLength = 8;
+
+      document.addEventListener('mousemove', function(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+      document.addEventListener('mouseleave', function() {
+        mouse.x = -1000;
+        mouse.y = -1000;
+      });
 
       function resize() {
         width = canvas.width = window.innerWidth;
@@ -29,7 +42,9 @@
             color: colors[Math.floor(Math.random() * colors.length)],
             vx: (Math.random() - 0.5) * 0.5,
             vy: (Math.random() - 0.5) * 0.5,
-            alpha: Math.random() * 0.5 + 0.2
+            baseAlpha: Math.random() * 0.5 + 0.2,
+            alpha: Math.random() * 0.5 + 0.2,
+            trail: []
           });
         }
       }
@@ -59,15 +74,66 @@
 
       function drawParticles() {
         particles.forEach(function(p) {
+          // Mouse attraction
+          var dx = mouse.x - p.x;
+          var dy = mouse.y - p.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          var drawRadius = p.radius;
+          if (dist < attractRadius && dist > 1) {
+            var proximity = 1 - dist / attractRadius;
+            var force = proximity * attractStrength;
+            p.vx += dx / dist * force;
+            p.vy += dy / dist * force;
+            p.alpha = Math.min(1, p.baseAlpha + proximity * 0.6);
+            drawRadius = p.radius + proximity * 2;
+
+            // Draw connection line to cursor
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = p.color;
+            ctx.globalAlpha = proximity * 0.15;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          } else {
+            p.vx *= 0.98;
+            p.vy *= 0.98;
+            p.alpha += (p.baseAlpha - p.alpha) * 0.02;
+          }
+
+          // Clamp velocity
+          var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+          if (speed > 3) {
+            p.vx = (p.vx / speed) * 3;
+            p.vy = (p.vy / speed) * 3;
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Store trail position
+          p.trail.push({ x: p.x, y: p.y });
+          if (p.trail.length > trailLength) p.trail.shift();
+
+          // Draw trail
+          for (var t = 0; t < p.trail.length - 1; t++) {
+            var trailAlpha = (t / p.trail.length) * p.alpha * 0.4;
+            var trailRadius = drawRadius * (t / p.trail.length) * 0.7;
+            ctx.beginPath();
+            ctx.arc(p.trail[t].x, p.trail[t].y, trailRadius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = trailAlpha;
+            ctx.fill();
+          }
+
+          // Draw main particle
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, drawRadius, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
           ctx.globalAlpha = p.alpha;
           ctx.fill();
           ctx.globalAlpha = 1;
-
-          p.x += p.vx;
-          p.y += p.vy;
 
           if (p.x < -10) p.x = width + 10;
           if (p.x > width + 10) p.x = -10;
@@ -118,28 +184,58 @@
   }
 
   // === Spotify Lazy-Load ===
-  var spotifyContainer = document.getElementById('spotify-embed');
-  if (spotifyContainer) {
+  var spotifyContainers = document.querySelectorAll('.spotify-container[data-src]');
+  if (spotifyContainers.length) {
     var spotifyObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
-          var src = spotifyContainer.dataset.src;
+          var container = entry.target;
+          var src = container.dataset.src;
           if (src) {
             var iframe = document.createElement('iframe');
             iframe.src = src;
             iframe.width = '100%';
-            iframe.height = '352';
+            iframe.height = '152';
             iframe.setAttribute('frameborder', '0');
             iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
             iframe.setAttribute('loading', 'lazy');
-            spotifyContainer.appendChild(iframe);
+            container.appendChild(iframe);
           }
-          spotifyObserver.unobserve(spotifyContainer);
+          spotifyObserver.unobserve(container);
         }
       });
     }, { rootMargin: '200px' });
 
-    spotifyObserver.observe(spotifyContainer);
+    spotifyContainers.forEach(function(container) {
+      spotifyObserver.observe(container);
+    });
+  }
+
+  // === Hero Profile Hover ===
+  var heroProfile = document.querySelector('.hero-profile');
+  var engineerImg = document.querySelector('.hero-profile-engineer');
+  var musicianImg = document.querySelector('.hero-profile-musician');
+  var ctaButtons = document.querySelectorAll('.hero-cta [data-profile]');
+
+  if (heroProfile && engineerImg && musicianImg) {
+    ctaButtons.forEach(function(btn) {
+      btn.addEventListener('mouseenter', function() {
+        var profile = btn.dataset.profile;
+        heroProfile.className = 'hero-profile ' + profile + '-hover';
+        if (profile === 'musician') {
+          engineerImg.classList.remove('active');
+          musicianImg.classList.add('active');
+        } else {
+          musicianImg.classList.remove('active');
+          engineerImg.classList.add('active');
+        }
+      });
+      btn.addEventListener('mouseleave', function() {
+        heroProfile.className = 'hero-profile';
+        musicianImg.classList.remove('active');
+        engineerImg.classList.add('active');
+      });
+    });
   }
 
   // === Smooth Scroll ===
